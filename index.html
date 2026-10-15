@@ -51,7 +51,7 @@ const regionPrefs=read('regions',{});let council=read('council','CFM');if(!nameM
 let favorites=read('favorites',[]);let selected=null;let frameURL='';
 function resolve(c,uf,reg){if(NATIONAL[c])return{url:NATIONAL[c],title:nameMap[c],external:c==='CFN'};
 if(c==='CREFITO'){const n=Number(reg)||fito[uf];if(!n)return null;return{url:fitoSites[n],title:'CREFITO-'+n+(n===17||n===22?' • consulta de especialistas':''),external:true}}
-if(c==='CREFONO'){const n=fono[uf];if(!n)return null;return{url:fonoSites[n],title:'CREFONO-'+n+' • '+uf,external:n===1||n===3}}return null}
+if(c==='CREFONO'){const n=fono[uf];if(!n)return null;return{url:fonoSites[n],title:'CREFONO-'+n+' • '+uf,external:[1,2,5,6].includes(n)}}return null}
 function prefsFor(c){return regionPrefs[c]||{uf:'',regional:''}}
 function selectCouncil(c,{restore=true,auto=true}={}){council=c;write('council',c);const p=restore?prefsFor(c):{uf:'',regional:''};$('uf').value=p.uf||'';$('regional').value=p.regional||'';$('ufField').hidden=!(c==='CREFITO'||c==='CREFONO');$('regionalField').hidden=c!=='CREFITO';for(const btn of $('choices').querySelectorAll('button')){const active=btn.dataset.c===c;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',active?'true':'false')}render(auto)}
 function currentValues(){return{c:council,uf:$('uf').value,regional:$('regional').value}}

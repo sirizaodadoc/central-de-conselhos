@@ -58,7 +58,8 @@ function currentValues(){return{c:council,uf:$('uf').value,regional:$('regional'
 function remember(){if(council==='CREFITO'||council==='CREFONO'){regionPrefs[council]={uf:$('uf').value,regional:council==='CREFITO'?$('regional').value:''};write('regions',regionPrefs)}}
 function displayBlank(message,externalUrl){$('frame').hidden=true;$('placeholder').hidden=false;$('placeholderText').textContent=message;$('placeholderOpen').hidden=!externalUrl;$('warning').hidden=true;$('portalStatus').textContent=message;}
 const EXTERNAL_TAB='central_conselhos_consulta';
-function openUrl(url){const tab=window.open(url,EXTERNAL_TAB);if(!tab){$('portalStatus').textContent='A abertura foi bloqueada. Use Abrir em aba e permita pop-ups para esta central.';return false}try{tab.opener=null;tab.focus()}catch(e){}return true}
+let externalWindow=null;
+function openUrl(url){let tab=null;try{if(externalWindow&&!externalWindow.closed){externalWindow.location.replace(url);tab=externalWindow}else{tab=window.open(url,EXTERNAL_TAB);if(tab)externalWindow=tab}}catch(e){tab=window.open(url,EXTERNAL_TAB);if(tab)externalWindow=tab}if(!tab){$('portalStatus').textContent='O navegador bloqueou a aba externa. Clique em Abrir em aba e permita pop-ups para esta central.';return false}try{tab.focus()}catch(e){}return true}
 function openExternal(){const v=currentValues();const d=resolve(v.c,v.uf,v.regional);if(d){openUrl(d.url)}else {$('portalStatus').textContent='Escolha a região primeiro.'}}
 function load(d,{explicit=false}={}){selected=d;$('portalTitle').textContent=d.title;
 if(d.external){if(frameURL){$('frame').removeAttribute('src');frameURL=''}displayBlank('Este conselho utiliza consulta em aba externa.',d.url);$('portalStatus').textContent='Abertura externa • '+d.url;if(explicit)openUrl(d.url);return}

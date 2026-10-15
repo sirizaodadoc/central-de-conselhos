@@ -1,10 +1,28 @@
 <!doctype html>
 <html lang="pt-BR">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1220"><title>Central de Conselhos · v5</title>
+<meta name="theme-color" content="#00a88f"><title>Central de Conselhos · v5</title>
 <style>
 :root{font:14px/1.45 Inter,Segoe UI,Arial,sans-serif;color-scheme:dark;--bg:#0b1220;--surface:#151f31;--line:#2c3b52;--txt:#ebf2ff;--sub:#a7b9d3;--blue:#4087ed}
 *{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--txt)}button,select{font:inherit}button{cursor:pointer;border:1px solid #40526d;border-radius:10px;background:#263955;color:var(--txt);padding:10px 12px}button:hover{background:#345071}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #86b6ff;outline-offset:2px}button.active{background:var(--blue);border-color:#73a6fa;color:white;font-weight:700}button.primary{background:var(--blue);border-color:#73a6fa;font-weight:700}button:disabled{opacity:.55;cursor:default}select{width:100%;padding:11px;background:#0d1729;color:var(--txt);border:1px solid #465c79;border-radius:10px}label{display:block;color:var(--sub);font-size:12px;margin-bottom:6px}h1{font-size:22px;margin:0}h2{font-size:15px;margin:0 0 12px}.muted{color:var(--sub);font-size:12px}header{padding:16px 20px;background:#101a2c;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.layout{display:grid;grid-template-columns:306px minmax(0,1fr);max-width:1800px;margin:auto;padding:14px;gap:14px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}.sidebar{align-self:start}.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choices button{display:flex;flex-direction:column;align-items:flex-start;min-height:65px;text-align:left;gap:3px}.choices small{font-size:11px;color:#c2d2e8;font-weight:400}.field{margin-top:14px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.actions button{flex:1}.info{background:#0e1a2d;border:1px solid #334a6c;border-radius:11px;padding:12px;margin-top:13px;word-wrap:break-word}.info strong{display:block}.info a{color:#b1d5ff;font-size:12px;overflow-wrap:anywhere}.favs{margin-top:14px}.chipline{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.chipline button{padding:7px 9px;font-size:12px}.heading{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.heading h2{margin:0}.frame{height:calc(100vh - 190px);min-height:460px;background:#fff;border-radius:11px;overflow:hidden}.frame iframe{width:100%;height:100%;border:0;background:#fff}.notice{background:#392e1a;border:1px solid #9b763c;border-radius:10px;padding:11px;margin-bottom:10px;color:#ffe4ac}.notice button{margin-left:8px}.placeholder{height:100%;background:#101a2d;color:#d5e4fa;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px}.placeholder h2{font-size:19px}.workspace-title{min-width:0}.workspace-title small{display:block;overflow-wrap:anywhere}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}footer{max-width:1800px;margin:auto;color:var(--sub);font-size:11px;padding:0 18px 20px}.compact .layout{grid-template-columns:240px minmax(0,1fr)}.compact .choices{grid-template-columns:1fr 1fr}.compact .choices button{min-height:50px;padding:8px}.compact .frame{height:calc(100vh - 145px)}@media(max-width:900px){.layout,.compact .layout{grid-template-columns:1fr}.frame,.compact .frame{height:68vh;min-height:400px}}@media(max-width:500px){.layout{padding:8px}.choices{grid-template-columns:1fr 1fr}.notice button{display:block;margin:9px 0 0}} 
+
+/* Tema verde inspirado na identidade visual da Doctoralia */
+:root{color-scheme:light;--bg:#f3faf8;--surface:#ffffff;--line:#d3e8e1;--txt:#173c35;--sub:#53756b;--blue:#00a88f}
+body{background:var(--bg);color:var(--txt)}
+header{background:#ffffff;border-bottom:1px solid var(--line);box-shadow:0 2px 9px #125e4d0d}
+.panel{background:#fff;border-color:var(--line);box-shadow:0 6px 22px #0b6b5110}
+button{background:#e7f6f1;border-color:#b6dfd3;color:#146455}
+button:hover{background:#d4efe6}
+button.active,button.primary{background:#008f79;border-color:#008f79;color:#fff}
+button.active:hover,button.primary:hover{background:#007f6c}
+button:focus-visible,select:focus-visible,a:focus-visible{outline-color:#00a88f}
+.choices small{color:#52766c}
+select{background:#fff;color:var(--txt);border-color:#b8d9cf}
+.info{background:#edf8f4;border-color:#c2e3d8;color:#1a6152}
+.info a{color:#007f6a}
+.notice{background:#fff9e8;border-color:#e8cc85;color:#725411}
+.placeholder{background:#eaf7f2;color:#205748}
+.muted,.workspace-title small,footer{color:var(--sub)}
 </style>
 </head><body>
 <header><div><h1>◈ Central de Conselhos</h1><div class="muted">Consulta profissional · v5 · sem instalação</div></div><label style="display:flex;align-items:center;gap:7px;margin:0"><input id="compact" type="checkbox"> Modo compacto</label></header>

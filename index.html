@@ -53,7 +53,7 @@ function resolve(c,uf,reg){if(NATIONAL[c])return{url:NATIONAL[c],title:nameMap[c
 if(c==='CREFITO'){const n=Number(reg)||fito[uf];if(!n)return null;return{url:fitoSites[n],title:'CREFITO-'+n+(n===17||n===22?' • consulta de especialistas':''),external:true}}
 if(c==='CREFONO'){const n=fono[uf];if(!n)return null;return{url:fonoSites[n],title:'CREFONO-'+n+' • '+uf,external:[1,2,5,6].includes(n)}}return null}
 function prefsFor(c){return regionPrefs[c]||{uf:'',regional:''}}
-function selectCouncil(c,{restore=true,auto=true}={}){council=c;write('council',c);const p=restore?prefsFor(c):{uf:'',regional:''};$('uf').value=p.uf||'';$('regional').value=p.regional||'';$('ufField').hidden=!(c==='CREFITO'||c==='CREFONO');$('regionalField').hidden=c!=='CREFITO';for(const btn of $('choices').querySelectorAll('button')){const active=btn.dataset.c===c;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',active?'true':'false')}render(auto)}
+function selectCouncil(c,{restore=true,auto=true}={}){council=c;write('council',c);const p=c==='CREFITO'?{uf:'',regional:''}:(restore?prefsFor(c):{uf:'',regional:''});$('uf').value=p.uf||'';$('regional').value=p.regional||'';$('ufField').hidden=!(c==='CREFITO'||c==='CREFONO');$('regionalField').hidden=c!=='CREFITO';for(const btn of $('choices').querySelectorAll('button')){const active=btn.dataset.c===c;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',active?'true':'false')}render(auto)}
 function currentValues(){return{c:council,uf:$('uf').value,regional:$('regional').value}}
 function remember(){if(council==='CREFITO'||council==='CREFONO'){regionPrefs[council]={uf:$('uf').value,regional:council==='CREFITO'?$('regional').value:''};write('regions',regionPrefs)}}
 function displayBlank(message,externalUrl){$('frame').hidden=true;$('placeholder').hidden=false;$('placeholderText').textContent=message;$('placeholderOpen').hidden=!externalUrl;$('warning').hidden=true;$('portalStatus').textContent=message;}
@@ -80,6 +80,6 @@ $('reload').onclick=()=>{const v=currentValues();const d=resolve(v.c,v.uf,v.regi
 $('saveFav').onclick=()=>{const v=currentValues();if(!resolve(v.c,v.uf,v.regional))return;if(!favorites.some(f=>f.c===v.c&&f.uf===v.uf&&f.regional===v.regional)){favorites.push(v);write('favorites',favorites);renderFavs()}};
 $('compact').checked=read('compact',false);document.body.classList.toggle('compact',$('compact').checked);
 $('compact').onchange=()=>{document.body.classList.toggle('compact',$('compact').checked);write('compact',$('compact').checked)};
-document.addEventListener('keydown',e=>{if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();const c=['CFM','CFP','CFO','CREFITO','CREFONO','CFN'][Number(e.code.slice(-1))-1];selectCouncil(c,{auto:true})}});
-selectCouncil(council,{auto:true});renderFavs();
+document.addEventListener('keydown',e=>{if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();const c=['CFM','CFP','CFO','CREFITO','CREFONO','CFN'][Number(e.code.slice(-1))-1];selectCouncil(c,{restore:c!=='CREFITO',auto:true})}});
+selectCouncil(council,{restore:council!=='CREFITO',auto:true});renderFavs();
 </script></body></html>

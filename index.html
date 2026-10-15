@@ -24,7 +24,7 @@
 <div class="info" id="destination" aria-live="polite">Selecione um conselho para começar.</div>
 <div class="actions"><button id="open" class="primary" type="button">Abrir consulta</button><button id="reload" type="button">Recarregar</button></div>
 <div class="favs" id="favsWrap"><div class="heading"><strong>Atalhos favoritos</strong><button id="saveFav" type="button" title="Salvar o conselho e região atuais">☆ Salvar</button></div><div class="chipline" id="favs"></div></div>
-<p class="muted">Selecione o conselho para carregar automaticamente quando houver um destino definido. CREFITO e Nutrição abrem no site oficial em outra aba. A região fica lembrada por conselho neste navegador.</p>
+<p class="muted">Selecione o conselho para carregar automaticamente quando houver um destino definido. CREFITO, Nutrição e os CREFONOs externos reutilizam uma mesma aba de consulta. A região fica lembrada por conselho neste navegador.</p>
 </aside>
 <section class="panel">
 <div class="heading"><div class="workspace-title"><h2 id="portalTitle">Painel de consulta</h2><small id="portalStatus" class="muted">Selecione um conselho</small></div><button id="external" type="button">Abrir em aba ↗</button></div>
@@ -57,7 +57,8 @@ function selectCouncil(c,{restore=true,auto=true}={}){council=c;write('council',
 function currentValues(){return{c:council,uf:$('uf').value,regional:$('regional').value}}
 function remember(){if(council==='CREFITO'||council==='CREFONO'){regionPrefs[council]={uf:$('uf').value,regional:council==='CREFITO'?$('regional').value:''};write('regions',regionPrefs)}}
 function displayBlank(message,externalUrl){$('frame').hidden=true;$('placeholder').hidden=false;$('placeholderText').textContent=message;$('placeholderOpen').hidden=!externalUrl;$('warning').hidden=true;$('portalStatus').textContent=message;}
-function openUrl(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();a.remove()}
+const EXTERNAL_TAB='central_conselhos_consulta';
+function openUrl(url){const tab=window.open(url,EXTERNAL_TAB);if(!tab){$('portalStatus').textContent='A abertura foi bloqueada. Use Abrir em aba e permita pop-ups para esta central.';return false}try{tab.opener=null;tab.focus()}catch(e){}return true}
 function openExternal(){const v=currentValues();const d=resolve(v.c,v.uf,v.regional);if(d){openUrl(d.url)}else {$('portalStatus').textContent='Escolha a região primeiro.'}}
 function load(d,{explicit=false}={}){selected=d;$('portalTitle').textContent=d.title;
 if(d.external){if(frameURL){$('frame').removeAttribute('src');frameURL=''}displayBlank('Este conselho utiliza consulta em aba externa.',d.url);$('portalStatus').textContent='Abertura externa • '+d.url;if(explicit)openUrl(d.url);return}

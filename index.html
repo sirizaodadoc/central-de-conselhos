@@ -11,11 +11,11 @@
 <section class="panel">
 <h2>Consultar profissional</h2>
 <div class="field"><label for="query">Nome ou número do registro</label><input id="query" placeholder="Nome completo ou registro" autocomplete="off" autofocus></div>
-<div class="field"><label for="council">Conselho</label><select id="council"><option value="CFM">CFM • Medicina</option><option value="CFP">CFP • Psicologia</option><option value="CFO">CFO • Odontologia</option><option value="CREFITO">CREFITO • Fisioterapia / T.O.</option><option value="CREFONO">CREFONO • Fonoaudiologia</option></select></div>
+<div class="field"><label for="council">Conselho</label><select id="council"><option value="CFM">CFM • Medicina</option><option value="CFP">CFP • Psicologia</option><option value="CFO">CFO • Odontologia</option><option value="CREFITO">CREFITO • Fisioterapia / T.O.</option><option value="CREFONO">CREFONO • Fonoaudiologia</option><option value="CFN">CFN / CRN • Nutrição</option></select></div>
 <div class="field"><label for="uf">Estado (UF)</label><select id="uf"><option value="">Brasil / não informado</option></select></div>
 <div class="buttons"><button class="primary" id="go">Consultar no painel</button><button id="external">Abrir em aba ↗</button></div>
 <div class="buttons" style="margin-top:7px"><button id="copy">Copiar pesquisa</button><button id="add">+ Adicionar à fila</button></div>
-<p class="muted small">Enter consulta · Alt+P próximo · Alt+Q adiciona · Alt+1 a 5 troca o conselho.</p>
+<p class="muted small">Enter consulta · Alt+P próximo · Alt+Q adiciona · Alt+1 a 6 troca o conselho.</p>
 <div id="dest" class="notice"></div>
 </section>
 <section class="panel"><h2>Conferência manual</h2><div class="status" id="current">Nenhuma consulta selecionada</div><div class="field" style="margin-top:10px"><label for="notes">Observação / registro / RQE</label><input id="notes" placeholder="Opcional"></div><div class="buttons"><button data-status="Ativo / regular" class="ok">Ativo</button><button data-status="Inativo / irregular">Inativo</button><button data-status="Não localizado">Não localizado</button><button data-status="Inconclusivo">Inconclusivo</button></div><p class="muted small">Os estados são anotados por você após consulta ao site oficial; nunca são inferidos pelo aplicativo.</p></section>
@@ -33,7 +33,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const ufList='AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ');
-const nato={CFM:'https://portal.cfm.org.br/busca-medicos/',CFP:'https://cadastro.cfp.org.br/',CFO:'https://busca-profissionais.cfo.org.br/'};
+const nato={CFM:'https://portal.cfm.org.br/busca-medicos/',CFP:'https://cadastro.cfp.org.br/',CFO:'https://busca-profissionais.cfo.org.br/',CFN:'https://cnn.cfn.org.br/application/index/consulta-nacional'};
 const fito={AC:18,AL:1,AP:12,AM:20,BA:7,CE:6,DF:11,ES:15,GO:19,MA:16,MT:9,MS:13,MG:4,PA:12,PB:21,PR:8,PE:1,PI:14,RJ:2,RN:22,RS:5,RO:18,RR:20,SC:10,SP:3,SE:17,TO:12};
 const fono={RJ:1,SP:2,PR:3,SC:3,AL:4,BA:4,PB:4,PE:4,SE:4,DF:5,GO:5,MS:5,MT:5,TO:5,ES:6,MG:6,RS:7,CE:8,MA:8,PI:8,RN:8,AC:9,AM:9,AP:9,PA:9,RO:9,RR:9};
 const fitoSites={1:'https://www.crefito1.org.br/',2:'https://www.crefito2.gov.br/',3:'https://crefito3.org.br/',4:'https://www.crefito4.org.br/site/',5:'https://crefito5.org.br/',6:'https://www.crefito6.com.br/',7:'https://crefito7.org.br/',8:'https://www.crefito8.org.br/',9:'https://crefito9.org.br/',10:'https://www.crefito10.org.br/',11:'https://crefito11.org.br/',12:'https://crefito12.org.br/',13:'https://crefito13.com.br/',14:'https://www.crefito14.org.br/',15:'https://www.crefito15.org.br/',16:'https://www.crefito16.org.br/',17:'https://crefito17.org.br/',18:'https://crefito18.org.br/',19:'https://crefito19.org.br/',20:'https://crefito20.org.br/',21:'https://www.crefito1.org.br/',22:'https://www.crefito1.org.br/'};
@@ -69,6 +69,6 @@ $('backup').onclick=()=>download(JSON.stringify({version:1,history,queue},null,2
 $('restore').onclick=()=>$('file').click();
 $('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!Array.isArray(data.history)||!Array.isArray(data.queue))throw Error('Formato inválido');if(confirm('Substituir histórico e fila?')){history=data.history;queue=data.queue;render()}}catch(err){alert('Não foi possível importar: '+err.message)}e.target.value=''};
 $('clear').onclick=()=>{if(confirm('Apagar histórico e fila deste navegador?')){history=[];queue=[];render()}};
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===$('query'))consult();if(e.altKey&&e.key.toLowerCase()==='p'){e.preventDefault();next()}if(e.altKey&&e.key.toLowerCase()==='q'){e.preventDefault();$('add').click()}if(e.altKey&&/^Digit[1-5]$/.test(e.code)){e.preventDefault();$('council').selectedIndex=Number(e.code.slice(-1))-1;updateDest()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===$('query'))consult();if(e.altKey&&e.key.toLowerCase()==='p'){e.preventDefault();next()}if(e.altKey&&e.key.toLowerCase()==='q'){e.preventDefault();$('add').click()}if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();$('council').selectedIndex=Number(e.code.slice(-1))-1;updateDest()}});
 updateDest();render();
 </script></body></html>

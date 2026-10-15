@@ -45,14 +45,15 @@ function values(){return{c:$('council').value,uf:$('uf').value,regional:$('counc
 function updateDest(){$('regionalField').hidden=$('council').value!=='CREFITO';let d=route($('council').value,$('uf').value,$('regional').value);$('dest').textContent=d.title+' • '+d.url;save('pref',{c:$('council').value,uf:$('uf').value})}
 async function copy(s){try{await navigator.clipboard.writeText(s)}catch{const x=document.createElement('textarea');x.value=s;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove()}}
 function consult(x=values()){current=x;const r=route(x.c,x.uf,x.regional);lastUrl=r.url;$('council').value=x.c;$('uf').value=x.uf;$('regional').value=x.regional||'';updateDest();$('portalName').textContent=r.title;const external=x.c==='CREFITO';$('embedWarning').style.display=external?'block':'none';$('iframeHelp').style.display=external?'none':'block';$('frame').src=external?'about:blank':r.url;$('siteStatus').textContent=external?'CREFITOs: a consulta oficial abre diretamente em outra aba.':'Carregado: '+r.url+' (a incorporação depende das permissões do site)';if(external){const tab=window.open(r.url,'_blank','noopener');if(!tab){$('siteStatus').textContent='Se uma aba não abriu, use o botão Abrir fora e confira o bloqueio de pop-ups.'}}}
-function outside(){const x=values();const r=current?route(current.c,current.uf,current.regional):route(x.c,x.uf,x.regional);window.open(r.url,'_blank','noopener')}
+function outside(){const x=values();const r=route(x.c,x.uf,x.regional);window.open(r.url,'_blank','noopener')}
 ufList.forEach(x=>$('uf').add(new Option(x,x)));for(let i=1;i<=22;i++)$('regional').add(new Option('CREFITO-'+i+(i===17||i===22?' • especialistas COFFITO':''),String(i)));
 let pref=store('pref',{c:'CFM',uf:''});$('council').value=pref.c;$('uf').value=pref.uf;
 $('compact').checked=compact;document.body.classList.toggle('compact',compact);
 $('compact').onchange=()=>{save('compact',$('compact').checked);document.body.classList.toggle('compact',$('compact').checked)};
-$('council').onchange=updateDest;$('uf').onchange=()=>{$('regional').value='';updateDest()};$('regional').onchange=updateDest;
-$('go').onclick=()=>consult();$('openHelpTab').onclick=outside;$('openBlocked').onclick=outside;$('external').onclick=outside;$('openSite').onclick=outside;$('repeat').onclick=()=>current?consult(current):consult();
+function autoLoad(){updateDest();const x=values();if((x.c==='CREFITO'||x.c==='CREFONO')&&!x.uf&&!x.regional){$('portalName').textContent='Selecione a UF ou regional para carregar';$('siteStatus').textContent='Aguardando a seleção de uma região.';$('frame').src='about:blank';$('embedWarning').style.display='none';$('iframeHelp').style.display='none';current=null;return;}consult(x)}
+$('council').onchange=()=>{ $('regional').value='';autoLoad()};$('uf').onchange=()=>{$('regional').value='';autoLoad()};$('regional').onchange=autoLoad;
+$('go').onclick=()=>consult();$('openHelpTab').onclick=outside;$('openBlocked').onclick=outside;$('external').onclick=outside;$('openSite').onclick=outside;$('repeat').onclick=()=>autoLoad();
 
-document.addEventListener('keydown',e=>{if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();$('council').selectedIndex=Number(e.code.slice(-1))-1;updateDest()}});
-updateDest();
+document.addEventListener('keydown',e=>{if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();$('council').selectedIndex=Number(e.code.slice(-1))-1;$('regional').value='';autoLoad()}});
+autoLoad();
 </script></body></html>

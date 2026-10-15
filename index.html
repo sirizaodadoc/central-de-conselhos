@@ -10,18 +10,18 @@
 <aside class="stack">
 <section class="panel">
 <h2>Consultar profissional</h2>
-<div class="field"><label for="query">Nome ou número do registro</label><input id="query" placeholder="Nome completo ou registro" autocomplete="off" autofocus></div>
+
 <div class="field"><label for="council">Conselho</label><select id="council"><option value="CFM">CFM • Medicina</option><option value="CFP">CFP • Psicologia</option><option value="CFO">CFO • Odontologia</option><option value="CREFITO">CREFITO • Fisioterapia / T.O.</option><option value="CREFONO">CREFONO • Fonoaudiologia</option><option value="CFN">CFN / CRN • Nutrição</option></select></div>
 <div class="field"><label for="uf">Estado (UF)</label><select id="uf"><option value="">Brasil / não informado</option></select></div><div class="field" id="regionalField" hidden><label for="regional">Regional CREFITO (seleção direta)</label><select id="regional"><option value="">Automático pela UF</option></select></div>
 <div class="buttons"><button class="primary" id="go">Consultar no painel</button><button id="external">Abrir em aba ↗</button></div>
-<div class="buttons" style="margin-top:7px"><button id="copy">Copiar pesquisa</button></div>
-<p class="muted small">Enter consulta · Alt+1 a 6 troca o conselho.</p>
+
+<p class="muted small">Alt+1 a 6 troca o conselho. Preencha nome ou registro diretamente no site oficial.</p>
 <div id="dest" class="notice"></div>
 </section>
 </aside>
 <section class="workspace"><div class="panel">
 <div class="workspaceHead"><div><h2 style="margin:0">Portal oficial incorporado</h2><span class="status" id="portalName">Escolha um conselho e consulte</span></div><div class="buttons"><button id="repeat">Reabrir portal</button><button id="openSite">Abrir fora ↗</button></div></div>
-<div id="embedWarning" class="notice" style="margin-bottom:10px;display:none"><strong>CREFITO configurado para abrir em aba externa.</strong> O acesso direto funciona na página oficial. <button id="openBlocked" class="primary" style="margin-left:8px">Abrir consulta diretamente ↗</button></div><div class="notice" style="margin-bottom:10px">Pesquisa: <strong id="selectedQuery">—</strong> <button id="copySelected" style="margin-left:8px;padding:5px 8px">Copiar</button> · UF: <strong id="selectedUf">—</strong>. A página oficial pode exigir que você cole o nome e realize a pesquisa manualmente. Se aparecer em branco ou acusar bloqueio, use “Abrir fora”.</div>
+<div id="embedWarning" class="notice" style="margin-bottom:10px;display:none"><strong>CREFITO configurado para abrir em aba externa.</strong> O acesso direto funciona na página oficial. <button id="openBlocked" class="primary" style="margin-left:8px">Abrir consulta diretamente ↗</button></div><div class="notice" style="margin-bottom:10px">Pesquise pelo nome ou registro diretamente no formulário do conselho oficial. Se a página não carregar, use “Abrir em aba”.</div>
 <div id="iframeHelp" class="notice" style="margin-bottom:10px;display:none;border-color:#c38c37;background:#4a371e;color:#ffebc1"><strong>⚠ Não conseguiu visualizar a consulta aqui?</strong> Alguns conselhos impedem a incorporação por segurança. Se aparecer uma tela em branco, “conexão recusada” ou erro, clique em <strong>Abrir em aba</strong>. <button id="openHelpTab" class="primary" style="margin-left:8px">Abrir em aba ↗</button></div>
 <div class="frame"><iframe title="Site do conselho profissional" id="frame" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
 <div id="siteStatus" class="muted small" style="margin-top:10px">Nenhuma página carregada.</div>
@@ -41,10 +41,10 @@ const save=(k,v)=>localStorage.setItem('ccweb_'+k,JSON.stringify(v));
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 let current=null,lastUrl='',compact=store('compact',false);
 function route(c,u,regionOverride=''){if(nato[c])return{title:c+' • Busca nacional',url:nato[c]};if(!u&&!(c==='CREFITO'&&regionOverride))return{title:c+' • Diretório regional',url:c==='CREFITO'?'https://www.coffito.gov.br/nsite/':'https://fonoaudiologia.org.br/buscar-profissionais-por-regiao/'};if(c==='CREFITO'){const n=Number(regionOverride||$('regional').value)||fito[u];return{title:'CREFITO-'+n+' • '+(u||'regional selecionada')+(n===17||n===22?' (busca alternativa de especialistas — não comprova situação cadastral)':''),url:fitoSites[n]}}const n=fono[u];return{title:'CRFa '+n+'ª região • '+u,url:fonoSites[n]}}
-function values(){return{name:$('query').value.trim(),c:$('council').value,uf:$('uf').value,regional:$('council').value==='CREFITO'?$('regional').value:''}}
+function values(){return{c:$('council').value,uf:$('uf').value,regional:$('council').value==='CREFITO'?$('regional').value:''}}
 function updateDest(){$('regionalField').hidden=$('council').value!=='CREFITO';let d=route($('council').value,$('uf').value,$('regional').value);$('dest').textContent=d.title+' • '+d.url;save('pref',{c:$('council').value,uf:$('uf').value})}
 async function copy(s){try{await navigator.clipboard.writeText(s)}catch{const x=document.createElement('textarea');x.value=s;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove()}}
-function consult(x=values()){if(!x.name){$('query').focus();return}current=x;const r=route(x.c,x.uf,x.regional);lastUrl=r.url;$('council').value=x.c;$('uf').value=x.uf;$('regional').value=x.regional||'';$('query').value=x.name;updateDest();$('portalName').textContent=r.title;$('selectedQuery').textContent=x.name;$('selectedUf').textContent=x.uf||'Brasil';const external=x.c==='CREFITO';$('embedWarning').style.display=external?'block':'none';$('iframeHelp').style.display=external?'none':'block';$('frame').src=external?'about:blank':r.url;$('siteStatus').textContent=external?'CREFITOs: a consulta oficial abre diretamente em outra aba.':'Carregado: '+r.url+' (a incorporação depende das permissões do site)';if(external){const tab=window.open(r.url,'_blank','noopener');if(!tab){$('siteStatus').textContent='Se uma aba não abriu, use o botão Abrir fora e confira o bloqueio de pop-ups.'}}copy(x.name)}
+function consult(x=values()){current=x;const r=route(x.c,x.uf,x.regional);lastUrl=r.url;$('council').value=x.c;$('uf').value=x.uf;$('regional').value=x.regional||'';updateDest();$('portalName').textContent=r.title;const external=x.c==='CREFITO';$('embedWarning').style.display=external?'block':'none';$('iframeHelp').style.display=external?'none':'block';$('frame').src=external?'about:blank':r.url;$('siteStatus').textContent=external?'CREFITOs: a consulta oficial abre diretamente em outra aba.':'Carregado: '+r.url+' (a incorporação depende das permissões do site)';if(external){const tab=window.open(r.url,'_blank','noopener');if(!tab){$('siteStatus').textContent='Se uma aba não abriu, use o botão Abrir fora e confira o bloqueio de pop-ups.'}}}
 function outside(){const x=values();const r=current?route(current.c,current.uf,current.regional):route(x.c,x.uf,x.regional);window.open(r.url,'_blank','noopener')}
 ufList.forEach(x=>$('uf').add(new Option(x,x)));for(let i=1;i<=22;i++)$('regional').add(new Option('CREFITO-'+i+(i===17||i===22?' • especialistas COFFITO':''),String(i)));
 let pref=store('pref',{c:'CFM',uf:''});$('council').value=pref.c;$('uf').value=pref.uf;
@@ -52,7 +52,7 @@ $('compact').checked=compact;document.body.classList.toggle('compact',compact);
 $('compact').onchange=()=>{save('compact',$('compact').checked);document.body.classList.toggle('compact',$('compact').checked)};
 $('council').onchange=updateDest;$('uf').onchange=()=>{$('regional').value='';updateDest()};$('regional').onchange=updateDest;
 $('go').onclick=()=>consult();$('openHelpTab').onclick=outside;$('openBlocked').onclick=outside;$('external').onclick=outside;$('openSite').onclick=outside;$('repeat').onclick=()=>current?consult(current):consult();
-$('copy').onclick=()=>copy($('query').value);$('copySelected').onclick=()=>copy(current?.name||$('query').value);
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===$('query'))consult();if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();$('council').selectedIndex=Number(e.code.slice(-1))-1;updateDest()}});
+
+document.addEventListener('keydown',e=>{if(e.altKey&&/^Digit[1-6]$/.test(e.code)){e.preventDefault();$('council').selectedIndex=Number(e.code.slice(-1))-1;updateDest()}});
 updateDest();
 </script></body></html>
